@@ -1,6 +1,5 @@
 (function () {
   const MISSING = "Not recorded yet. Record it once in Voice Memos and it plays here.";
-  const EPOCH = Date.UTC(2026, 0, 1);
   const PERIOD = 14;
 
   const state = {
@@ -34,24 +33,35 @@
     return ((n % m) + m) % m;
   }
 
-  function calendarUtc() {
-    const raw = new URLSearchParams(location.search).get("on");
+  function dayUtc(raw) {
     const match = raw && /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
-    if (match) {
-      const y = Number(match[1]);
-      const m = Number(match[2]);
-      const d = Number(match[3]);
-      const utc = Date.UTC(y, m - 1, d);
-      const check = new Date(utc);
-      if (check.getUTCFullYear() === y && check.getUTCMonth() === m - 1 && check.getUTCDate() === d) return utc;
-    }
-    const now = new Date();
-    return Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    if (!match) return null;
+    const y = Number(match[1]);
+    const m = Number(match[2]);
+    const d = Number(match[3]);
+    const utc = Date.UTC(y, m - 1, d);
+    const check = new Date(utc);
+    if (check.getUTCFullYear() !== y || check.getUTCMonth() !== m - 1 || check.getUTCDate() !== d) return null;
+    return utc;
+  }
+
+  function calendarUtc() {
+    const override = dayUtc(new URLSearchParams(location.search).get("on"));
+    if (override != null) return override;
+    const zone = state.pack.timeZone || "America/Los_Angeles";
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: zone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(new Date());
+    const value = (type) => parts.find((part) => part.type === type).value;
+    return dayUtc(`${value("year")}-${value("month")}-${value("day")}`);
   }
 
   function schedule() {
     const shlokas = state.pack.shlokas;
-    const dayIndex = Math.round((calendarUtc() - EPOCH) / 86400000);
+    const dayIndex = Math.round((calendarUtc() - dayUtc(state.pack.epoch)) / 86400000);
     const shlokaIndex = mod(Math.floor(dayIndex / PERIOD), shlokas.length);
     const day = mod(dayIndex, PERIOD) + 1;
     return {
@@ -426,7 +436,7 @@
       const res = await fetch(new URL("data/shlokas.json", document.baseURI));
       if (!res.ok) throw new Error("missing");
       pack = await res.json();
-      if (!pack || !Array.isArray(pack.shlokas) || pack.shlokas.length !== 3) throw new Error("shape");
+      if (!pack || !Array.isArray(pack.shlokas) || pack.shlokas.length !== 3 || !dayUtc(pack.epoch)) throw new Error("shape");
       pack.shlokas.forEach((item) => {
         if (!item || !Array.isArray(item.lines) || item.lines.some((line) => typeof line !== "string")) {
           throw new Error("lines");

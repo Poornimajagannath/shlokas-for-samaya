@@ -11,7 +11,7 @@ The page opens on this fortnight’s shloka.
 - **Play Amma's voice** plays the recording for that shloka. Until the file is there, the button is dimmed and the page says it is not recorded yet.
 - **See whole shloka** opens every line in a sheet.
 - **Practice** shows one line. Hear it, then you say it. Back a line and Next line move through the shloka.
-- **Two weeks with this shloka** is a 14-day bar. Day 1 is the phone’s own date. The cycle starts on 1 January 2026 with Gajaananam, then Saraswati Namastubhyam, then Poojyaaya Raaghavendraaya, then Gajaananam again.
+- **Two weeks with this shloka** is a 14-day bar. The day follows the date in Los Angeles. The cycle starts on Friday 20 November 2026 with Gajaananam, then Saraswati Namastubhyam, then Poojyaaya Raaghavendraaya, then Gajaananam again.
 - **Coming up** and **All 3 shlokas** let you look at the other two. **Back to this week** returns to the one the date chose.
 
 ## Add Amma’s recording

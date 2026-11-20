@@ -121,7 +121,7 @@ async function expectLayout(page) {
 test("home, practice, and the sheets stay on the phone", async ({ page }) => {
   test.setTimeout(60_000);
   const errors = trackErrors(page);
-  await page.goto("/?on=2026-01-04");
+  await page.goto("/?on=2026-11-23");
   await expect(page.getByRole("heading", { name: "Gajaananam" })).toBeVisible();
   await expect(page.getByText("Shloka of the week")).toBeVisible();
   await expect(page.getByText("For Ganesha · Week 1 of 2")).toBeVisible();
@@ -191,6 +191,8 @@ test("home, practice, and the sheets stay on the phone", async ({ page }) => {
 test("whole-shloka line counts match the json and no translation text exists", async ({ page }) => {
   test.setTimeout(60_000);
   const pack = JSON.parse(fs.readFileSync(new URL("../data/shlokas.json", import.meta.url), "utf8"));
+  expect(pack.epoch).toBe("2026-11-20");
+  expect(pack.timeZone).toBe("America/Los_Angeles");
   expect(pack.shlokas.map((item) => item.id)).toEqual(["gajananam", "saraswati", "raghavendra"]);
   for (const item of pack.shlokas) {
     expect(item.lines).toEqual(VERIFIED[item.id].lines);
@@ -208,7 +210,7 @@ test("whole-shloka line counts match the json and no translation text exists", a
   }
 
   const errors = trackErrors(page);
-  await page.goto("/?on=2026-01-04");
+  await page.goto("/?on=2026-11-23");
   for (const item of pack.shlokas) {
     if (item.id !== "gajananam") {
       await page.getByRole("button", { name: item.short, exact: true }).click();
@@ -250,13 +252,14 @@ test("whole-shloka line counts match the json and no translation text exists", a
 
 test("the date moves the shloka every fourteen days", async ({ page }) => {
   const cases = [
-    ["2026-01-01", "Gajaananam", "Day 1 of 14", "Week 1 of 2"],
-    ["2026-01-08", "Gajaananam", "Day 8 of 14", "Week 2 of 2"],
-    ["2026-01-14", "Gajaananam", "Day 14 of 14", "Week 2 of 2"],
-    ["2026-01-15", "Saraswati Namastubhyam", "Day 1 of 14", "Week 1 of 2"],
-    ["2026-01-29", "Poojyaaya Raaghavendraaya", "Day 1 of 14", "Week 1 of 2"],
-    ["2026-02-11", "Poojyaaya Raaghavendraaya", "Day 14 of 14", "Week 2 of 2"],
-    ["2026-02-12", "Gajaananam", "Day 1 of 14", "Week 1 of 2"],
+    ["2026-11-20", "Gajaananam", "Day 1 of 14", "Week 1 of 2"],
+    ["2026-11-23", "Gajaananam", "Day 4 of 14", "Week 1 of 2"],
+    ["2026-11-27", "Gajaananam", "Day 8 of 14", "Week 2 of 2"],
+    ["2026-12-03", "Gajaananam", "Day 14 of 14", "Week 2 of 2"],
+    ["2026-12-04", "Saraswati Namastubhyam", "Day 1 of 14", "Week 1 of 2"],
+    ["2026-12-18", "Poojyaaya Raaghavendraaya", "Day 1 of 14", "Week 1 of 2"],
+    ["2026-12-31", "Poojyaaya Raaghavendraaya", "Day 14 of 14", "Week 2 of 2"],
+    ["2027-01-01", "Gajaananam", "Day 1 of 14", "Week 1 of 2"],
   ];
   for (const [on, title, day, week] of cases) {
     await page.goto(`/?on=${on}`);
@@ -266,9 +269,22 @@ test("the date moves the shloka every fourteen days", async ({ page }) => {
   }
 });
 
+test("Los Angeles midnight keeps Friday 20 Nov on Gajaananam", async ({ page }) => {
+  await page.clock.install({ time: new Date("2026-11-21T07:30:00Z") });
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Gajaananam", exact: true })).toBeVisible();
+  await expect(page.getByText("Day 1 of 14")).toBeVisible();
+  await expect(page.getByText("Week 1 of 2")).toBeVisible();
+
+  await page.clock.setFixedTime(new Date("2026-11-21T08:30:00Z"));
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Gajaananam", exact: true })).toBeVisible();
+  await expect(page.getByText("Day 2 of 14")).toBeVisible();
+});
+
 test("motion stays still when reduced motion is on", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/?on=2026-01-04");
+  await page.goto("/?on=2026-11-23");
   await page.getByRole("button", { name: "See whole shloka" }).click();
   const sheetAnim = await page.locator("#whole .picker-sheet").evaluate((el) => getComputedStyle(el).animationName);
   expect(sheetAnim).toBe("fadeOnly");
@@ -290,7 +306,7 @@ test("a dropped recording can play", async ({ page }, testInfo) => {
     }
     await route.fulfill({ status: 404, body: "missing" });
   });
-  await page.goto("/?on=2026-01-04");
+  await page.goto("/?on=2026-11-23");
   const play = page.getByRole("button", { name: "Play Amma's voice" });
   await expect(play).toBeEnabled();
   await expect(page.locator("[data-missing]:visible")).toHaveCount(0);
@@ -309,7 +325,7 @@ test("a dropped recording can play", async ({ page }, testInfo) => {
 test("iphone 14 screenshots", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "iphone-14");
   const dir = "/opt/cursor/artifacts";
-  await page.goto("/?on=2026-01-04");
+  await page.goto("/?on=2026-11-23");
   await settle(page);
   await page.screenshot({ path: `${dir}/iphone14-home.png`, fullPage: false });
 

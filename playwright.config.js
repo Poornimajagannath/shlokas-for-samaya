@@ -16,7 +16,7 @@ export default defineConfig({
     browserName: "chromium",
     hasTouch: true,
     isMobile: true,
-    timezoneId: "Asia/Kolkata",
+    timezoneId: "America/Los_Angeles",
   },
   webServer: {
     command: "python3 -m http.server 4173",
