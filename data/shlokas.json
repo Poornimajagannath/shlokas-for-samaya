@@ -1,0 +1,48 @@
+{
+  "epoch": "2026-01-01",
+  "periodDays": 14,
+  "shlokas": [
+    {
+      "id": "gajananam",
+      "deity": "Ganesha",
+      "title": "Gajaananam",
+      "short": "Gajaananam",
+      "image": "images/ganesha.jpg",
+      "alt": "Ganesha sitting on a pink lotus, with a little mouse",
+      "lines": [
+        "Gajaananam bhoota-ganaadi sevitam",
+        "Kapittha jamboo phala saara bhakshitam",
+        "Umaa-sutam shoka vinaasha kaaranam",
+        "Namaami vighneshwara paada pankajam"
+      ]
+    },
+    {
+      "id": "saraswati",
+      "deity": "Saraswati",
+      "title": "Saraswati Namastubhyam",
+      "short": "Saraswati",
+      "image": "images/saraswati.jpg",
+      "alt": "Saraswati seated on a white lotus with a veena and a swan",
+      "lines": [
+        "Saraswati namastubhyam",
+        "Varade kaamaroopini",
+        "Vidyaarambham karishyaami",
+        "Siddhir bhavatu me sadaa"
+      ]
+    },
+    {
+      "id": "raghavendra",
+      "deity": "Sri Raghavendra Swamy",
+      "title": "Poojyaaya Raaghavendraaya",
+      "short": "Raghavendra",
+      "image": "images/raghavendra.jpg",
+      "alt": "Sri Raghavendra Swamy seated with a staff and prayer beads",
+      "lines": [
+        "Poojyaaya raaghavendraaya",
+        "Satya-dharma rataaya cha",
+        "Bhajataam kalpa-vrukshaaya",
+        "Namataam kaamadhenave"
+      ]
+    }
+  ]
+}
